@@ -10,7 +10,19 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/', 'TasksController@index');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::resource('tasks', 'TasksController');
+/*
+Route::get('tasks/{id}', 'TasksController@show');
+Route::post('tasks', 'TasksController@store');
+Route::put('tasks/{id}', 'TasksController@update');
+Route::delete('tasks/{id}', 'TasksController@destroy');
+
+// index: showの補助ページ
+Route::get('tasks', 'TasksController@index')->name('tasks.index');
+// create: 新規作成用のフォームページ
+Route::get('tasks/create', 'TasksController@create')->name('tasks.create');
+// edit: 更新用のフォームページ
+Route::get('tasks/{id}/edit', 'TasksController@edit')->name('tasks.edit');
+*/
