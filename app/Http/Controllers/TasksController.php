@@ -28,10 +28,13 @@ class TasksController extends Controller
                 'user' => $user,
                 'tasks' => $tasks,
             ];
-        }
+            
+            //　メッセージ一覧ビューでそれを表示
+            return view('tasks.index', $data);
+        }else
+            //　ログインしていないならログイン画面へ
+            return  redirect('/login');
 
-        //　メッセージ一覧ビューでそれを表示
-        return view('tasks.index', $data);
     }
 
 
@@ -92,10 +95,16 @@ class TasksController extends Controller
         //　idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
         
-        //　タスク詳細ビューでそれを表示
-        return view('tasks.show', [
-            'task' => $task,
+        // 認証済みユーザ（閲覧者）がその投稿の所有者である場合のみ
+        if (\Auth::id() === $task->user_id) {
+            //　タスク詳細ビューでそれを表示
+            return view('tasks.show', [
+                'task' => $task,
             ]);
+        }else
+        //　トップページへリダイレクトさせる
+        return redirect('/');
+
     }
 
     /**
@@ -111,10 +120,16 @@ class TasksController extends Controller
         // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
         
-        // タスクを編集ビューでそれを表示
-        return view('tasks.edit', [
-            'task' => $task,
+        // 認証済みユーザ（閲覧者）がその投稿の所有者である場合のみ
+        if (\Auth::id() === $task->user_id) {
+            // タスクを編集ビューでそれを表示
+            return view('tasks.edit', [
+                'task' => $task,
             ]);
+        }else 
+        //　トップページへリダイレクトさせる
+        return redirect('/');
+
     }
 
     /**
@@ -136,11 +151,13 @@ class TasksController extends Controller
             
         // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
-        // メッセージを更新
-        $task->status = $request->status;
-        $task->content = $request->content;
-        $task->save();
-        
+        // 認証済みユーザ（閲覧者）がその投稿の所有者である場合のみ更新
+        if (\Auth::id() === $task->user_id) {
+            // メッセージを更新
+            $task->status = $request->status;
+            $task->content = $request->content;
+            $task->save();
+        }
         //　トップページへリダイレクトさせる
         return redirect('/');
     }
